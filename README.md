@@ -38,7 +38,7 @@ project/
 * `vocab_size`: Размер словаря (26 букв английского алфавита + пробел)
 * `hidden_size`: Размер скрытого состояния (128)
 * `dropout`: Вероятность dropout (0.2)
-* `batch_size`: Размер батча (1024)
+* `batch_size`: Размер батча (512)
 * `learning_rate`: Скорость обучения (0.001)
 
 ## Задание 2: Генератор текста Симпсонов
@@ -52,25 +52,8 @@ project/
 ### Использование проекта
 
 ```python
-# Расшифровка текста
-model = CaesarDecoder(VOCAB_SIZE, HIDDEN_SIZE, DROPOUT)
-encrypted_text = "khoor zruog"
-shift = 3
-decoded_text = decode_text(model, encrypted_text, shift)
-
-# Генерация текста Симпсонов
-start_text = "Edna Krabappel-Flanders"
+# Пример генерации текста
+start_text = "homer"
 generated_text = generate_text(model, start_text, max_length=50)
+print(f"Generated text: {generated_text}")
 ```
-
-## Результаты обучения
-
-Модель расшифровки шифра Цезаря показывает высокую точность:
-
-
-
-Генератор текста успешно учится на диалогах персонажей Симпсонов и может генерировать новые фразы в их стиле.
-
-## Возможные улучшения
-
-* Добавление более сложной архитектуры RNN (например, LSTM или GRU)
