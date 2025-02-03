@@ -1,59 +1,103 @@
-# Нейронные сети для расшифровки шифра Цезаря и генерации текста Симпсонов
+# Нейронные сети для криптографии и генерации текста
+==========================
 
-Проект содержит две основные части:
-1. Модель для расшифровки шифра Цезаря с использованием RNN
-2. Генератор текста на основе диалогов персонажей Симпсонов
+Проект по разработке двух нейронных сетей:
+1. Декодировщик шифра Цезаря на основе RNN
+2. Генератор текста в стиле Симпсонов с использованием кастомной RNN-ячейки
 
-## Установка зависимостей
+## Описание проекта
+--------------
 
-```bash
-pip install torch pandas
-```
+Проект состоит из двух основных заданий:
 
-## Структура проекта
+### Задание 1: Расшифровка шифра Цезаря
+* Реализация алгоритма шифрования сдвигом
+* Создание RNN-сети для декодирования
+* Обучение на наборе зашифрованных фраз
+* Точность расшифровки достигает 98.6%
 
-```markdown
-project/
-├── src/
-│   ├── models.py      # Определения моделей
-│   └── utils.py       # Утилиты для работы с данными
-└── data/
-    └── simpsons_script_lines.csv  # Данные для генерации текста
-```
+### Задание 2: Генерация текста
+* Разработка кастомной RNN-ячейки
+* Обучение на диалогах персонажей Симпсонов
+* Генерация новых фраз в том же стиле
 
-## Задание 1: Расшифровка шифра Цезаря
+## Технические детали
+-------------------
 
-### Модель
+### Используемые технологии
+* PyTorch для построения и обучения моделей
+* Pandas для обработки данных
+* CUDA для ускорения вычислений
 
-Модель использует архитектуру RNN с двумя слоями и Dropout для предотвращения переобучения:
+### Архитектура решений
 
-
-
-Поток данных через модель происходит следующим образом:
-
-
-
-### Параметры модели
-
-* `vocab_size`: Размер словаря (26 букв английского алфавита + пробел)
-* `hidden_size`: Размер скрытого состояния (128)
-* `dropout`: Вероятность dropout (0.2)
-* `batch_size`: Размер батча (512)
-* `learning_rate`: Скорость обучения (0.001)
-
-## Задание 2: Генератор текста Симпсонов
-
-### Модель
-
-Кастомная RNN-ячейка реализована на основе полносвязных слоев:
-
-
-
-### Использование проекта
-
+#### Шифр Цезаря
 ```python
-# Пример генерации текста
+class CaesarDecoder(nn.Module):
+    def __init__(self, vocab_size, hidden_size, dropout):
+        super(CaesarDecoder, self).__init__()
+        self.embedding = nn.Embedding(vocab_size, hidden_size)
+        self.shift_embedding = nn.Embedding(11, hidden_size)
+        self.rnn = nn.RNN(hidden_size * 2, hidden_size, batch_first=True, num_layers=2, dropout=dropout)
+        self.fc = nn.Linear(hidden_size, vocab_size)
+```
+
+#### Кастомная RNN-ячейка
+```python
+class CustomRNNCell(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super(CustomRNNCell, self).__init__()
+        self.hidden_size = hidden_size
+        self.i2h = nn.Linear(input_size, hidden_size)
+        self.h2h = nn.Linear(hidden_size, hidden_size)
+```
+
+## Установка и запуск
+---------------------
+
+### Необходимые библиотеки
+```bash
+pip install torch torchvision pandas
+```
+
+### Команды для запуска
+```bash
+# Для обучения модели шифра Цезаря
+python train_caesar.py
+
+# Для обучения генератора текста
+python train_generator.py
+```
+
+## Примеры использования
+----------------------
+
+### Расшифровка текста
+```python
+text = "hello world"
+shift = random.randint(1, 10)
+encrypted_text = caesar_cipher(text, shift)
+decoded_text = decode_text(model, encrypted_text, shift)
+print(f"Original: {text}")
+print(f"Encrypted: {encrypted_text}")
+print(f"Decoded: {decoded_text}")
+```
+
+### Генерация текста
+```python
 start_text = "homer"
 generated_text = generate_text(model, start_text, max_length=50)
 print(f"Generated text: {generated_text}")
 ```
+
+## Результаты
+-------------
+
+### Модель шифра Цезаря
+* Loss: 0.0271
+* Accuracy: 98.63%
+* Успешное декодирование текстов с различными сдвигами
+
+### Генератор текста
+* Loss: 1.1595
+* Успешная генерация текста в стиле диалогов Симпсонов
